@@ -30,8 +30,17 @@
 *           2020/11/30  1.18 support api change strsvrstart(),strsvrstat()
 *-----------------------------------------------------------------------------*/
 #include <signal.h>
+#ifndef _MSC_VER
 #include <unistd.h>
+#endif
+#ifndef _UNISTD_H
+#define _UNISTD_H
+#include <io.h>
+#include <process.h>
+#endif /* _UNISTD_H */
+
 #include "rtklib.h"
+
 
 #define PRGNAME     "str2str"          /* program name */
 #define MAXSTR      5                  /* max number of streams */
@@ -298,8 +307,11 @@ int main(int argc, char **argv)
     }
     signal(SIGTERM,sigfunc);
     signal(SIGINT ,sigfunc);
+    #ifndef _WIN32
+    // Only compile this block for non-Windows platforms
     signal(SIGHUP ,SIG_IGN);
     signal(SIGPIPE,SIG_IGN);
+    #endif
     
     strsvrinit(&strsvr,n+1);
     
